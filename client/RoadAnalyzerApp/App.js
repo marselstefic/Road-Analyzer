@@ -74,7 +74,7 @@ export default function App() {
             onPress={_slow}
             style={[styles.button, styles.middleButton]}
           >
-          <Text>Slower</Text>
+          <Text>Slowest</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={_fast} style={styles.button}>
             <Text>Fast</Text>
