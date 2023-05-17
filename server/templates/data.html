@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data</title>
+</head>
+<body>
+    <h2>Data</h2>
+    <ul>
+        {% for item in data %}
+        <li>gyroX: {{ item.gyroX }}</li>
+        <li>gyroY: {{ item.gyroY }}</li>
+        <li>gyroZ: {{ item.gyroZ }}</li>
+        <li>accelerometerX: {{ item.accelerometerX }}</li>
+        <li>accelerometerY: {{ item.accelerometerY }}</li>
+        <li>accelerometerZ: {{ item.accelerometerZ }}</li>
+        <li>longitude: {{ item.longitude }}</li>
+        <li>latitude: {{ item.latitude }}</li>
+        <li>timestamp: {{ item.timestamp }}</li>
+        <br>
+        {% endfor %}
+    </ul>
+</body>
+</html>
