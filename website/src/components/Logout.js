@@ -6,8 +6,23 @@ function Logout(){
     const userContext = useContext(UserContext);
     useEffect(function(){
         const logout = async function(){
-            userContext.setUserContext(null);
-            const res = await fetch("http://localhost:5000/users/logout");
+            try {
+                const res = await fetch("http://localhost:5000/logout", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (!res.ok) {
+                    throw new Error("Logout failed");
+                }
+
+                userContext.setUserContext(null);
+            } catch (err) {
+                console.error("Failed to logout:", err);
+                // optionally show the error to the user
+            }
         }
         logout();
     }, []);

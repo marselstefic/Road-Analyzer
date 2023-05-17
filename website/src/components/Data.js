@@ -11,28 +11,27 @@ const Data = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:5000/data');
-      console.log(response.data); 
-      setData([response.data]);
+      if (response.data) {
+        setData(response.data); // assuming the data returned is an array
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching data: ', error);
     }
   };
-  
 
   return (
     <div>
-
-      {data.map((data) => (
-        <div key={data._id}>
-          <p>GyroX: {data.gyroX}</p>
-          <p>GyroY: {data.gyroY}</p>
-          <p>GyroZ: {data.gyroZ}</p>
-          <p>AccelerometerX: {data.accelerometerX}</p>
-          <p>AccelerometerY: {data.accelerometerY}</p>
-          <p>AccelerometerZ: {data.accelerometerZ}</p>
-          <p>Longitude: {data.longitude}</p>
-          <p>Latitude: {data.latitude}</p>
-          <p>Timestamp: {data.timestamp}</p>
+      {data.map((item, index) => (
+        <div key={index}>
+          <p>GyroX: {item.gyroX}</p>
+          <p>GyroY: {item.gyroY}</p>
+          <p>GyroZ: {item.gyroZ}</p>
+          <p>AccelerometerX: {item.accelerometerX}</p>
+          <p>AccelerometerY: {item.accelerometerY}</p>
+          <p>AccelerometerZ: {item.accelerometerZ}</p>
+          <p>Longitude: {item.longitude}</p>
+          <p>Latitude: {item.latitude}</p>
+          <p>Timestamp: {item.timestamp}</p>
         </div>
       ))}
     </div>
