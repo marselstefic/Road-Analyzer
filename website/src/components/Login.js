@@ -22,7 +22,7 @@ const Login = () => {
             if (res.status === 200) {
                 // Login was successful
                 console.log('Logged in successfully');
-                console.log(username);
+                //console.log(data);
                 setUserContext(res.data);
                 navigate("/");
             }
@@ -36,8 +36,6 @@ const Login = () => {
         }
         
     }
-
-    
 
     return (
         <form onSubmit={handleLogin}>
