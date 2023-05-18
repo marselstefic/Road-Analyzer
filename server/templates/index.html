@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Web Page</title>
+    <title>My Web Page</title>      
 </head>
 <body>
     <h1>Welcome to My Web Page</h1>
+    <ul style="list-style-type: none;">
+        <li><a href="/">Home</a></li>
+        {% if 'username' not in session %}
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Login</a></li>
+        {% else %}
+          <li><a href="/data">Data</a></li>
+          <li><a href="/logout">Logout</a></li>
+        {% endif %}
+      </ul>
 </body>
 </html>

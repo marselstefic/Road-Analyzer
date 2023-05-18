@@ -2,22 +2,51 @@
 <html>
 <head>
     <title>Data</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Function to refresh the data
+        var refreshData = debounce(function() {
+            $.ajax({
+                url: '/data',
+                type: 'GET',
+                success: function(response) {
+                    // Update the data container with the new data
+                    $('#data-container').html(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }, 5000);
+
+        // Debounce function to limit the rate of function execution
+        function debounce(func, delay) {
+            var timeout;
+            return function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(func, delay);
+            };
+        }
+
+        // Call the refreshData() function to start the initial data update
+        refreshData();
+    });
+    </script>
 </head>
 <body>
-    <h2>Data</h2>
-    <ul>
+    <div id="data-container">
+        <h2>Data</h2>
         {% for item in data %}
-        <li>gyroX: {{ item.gyroX }}</li>
-        <li>gyroY: {{ item.gyroY }}</li>
-        <li>gyroZ: {{ item.gyroZ }}</li>
-        <li>accelerometerX: {{ item.accelerometerX }}</li>
-        <li>accelerometerY: {{ item.accelerometerY }}</li>
-        <li>accelerometerZ: {{ item.accelerometerZ }}</li>
-        <li>longitude: {{ item.longitude }}</li>
-        <li>latitude: {{ item.latitude }}</li>
-        <li>timestamp: {{ item.timestamp }}</li>
-        <br>
+        <ul>
+            <li>
+                gyroX: {{ item.gyroX }}, gyroY: {{ item.gyroY }}, gyroZ: {{ item.gyroZ }},
+                accelerometerX: {{ item.accelerometerX }}, accelerometerY: {{ item.accelerometerY }}, accelerometerZ: {{ item.accelerometerZ }},
+                longitude: {{ item.longitude }}, latitude: {{ item.latitude }}, timestamp: {{ item.timestamp }}
+            </li>
+        </ul>
         {% endfor %}
-    </ul>
+        <a href="javascript:history.go(-1)">Go Back</a>
+    </div>
 </body>
 </html>

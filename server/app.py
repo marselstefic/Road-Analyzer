@@ -100,11 +100,8 @@ def logout():
 
 @app.route('/data', methods=['GET'])
 def get_all_data():
-    if 'username' not in session:
-        return jsonify({'error': 'Unauthorized'}), 401
-
     try:
-        data = Data.objects().all()  # Fetch all data from the database
+        data = list(Data.objects())
         return render_template('data.html', data=data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
