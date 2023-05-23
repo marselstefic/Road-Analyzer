@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import Bcrypt
+import math
 
 app = Flask(__name__)
 CORS(app)
@@ -28,12 +29,35 @@ class Data(db.Document):
     accelerometerZ = db.FloatField()
     longitude = db.FloatField()
     latitude = db.FloatField()
-    timestamp = db.DateTimeField()
+    used = db.BooleanField()
 
 class User(db.Document):
     username = db.StringField(unique=True)
     email = db.StringField(unique=True)
     password = db.StringField()
+
+class Quality(db.Document):
+    value = db.FloatField()
+    longitude = db.FloatField()
+    latitude = db.FloatField()
+
+# Algorithm for data processing
+def process_data(data):
+    normalized_gyroX = data['gyroX'] / 15
+    normalized_gyroY = data['gyroY'] / 15
+    normalized_gyroZ = data['gyroZ'] / 15
+    normalized_accX = data['accelerometerX'] / 50
+    normalized_accY = data['accelerometerY'] / 50
+    normalized_accZ = data['accelerometerZ'] / 50
+    magnitude = math.sqrt(
+        normalized_gyroX**2 + normalized_gyroY**2 + normalized_gyroZ**2 +
+        normalized_accX**2 + normalized_accY**2 + normalized_accZ**2
+    )
+    min_magnitude = 0
+    max_magnitude = math.sqrt(1**2 + 1**2 + 1**2 + 1**2 + 1**2 + 1**2)
+    scaled_value = (magnitude - min_magnitude) / (max_magnitude - min_magnitude) * 10
+
+    return scaled_value
 
 # Routes
 @app.route('/')
@@ -56,7 +80,6 @@ def register():
 
         if User.objects(email=email):
             return jsonify({'error': 'Email is already in use'}), 400
-
 
         # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -101,21 +124,27 @@ def logout():
 @app.route('/data', methods=['GET'])
 def get_all_data():
     try:
-        data = list(Data.objects())
-        return render_template('data.html', data=data)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Retrieve all unused data
+        data = Data.objects(used=False)
 
-@app.route('/data', methods=['POST'])
-def add_data():
-    if 'username' not in session:
-        return jsonify({'error': 'Unauthorized'}), 401
+        # Process and save each data entry as Quality
+        for entry in data:
+            scaled_value = process_data(entry.to_mongo().to_dict())
 
-    try:
-        data = request.get_json()
-        new_data = Data(**data)
-        new_data.save()
-        return jsonify({'message': 'Data saved successfully'}), 201
+            quality = Quality(
+                value=scaled_value,
+                longitude=entry.longitude,
+                latitude=entry.latitude,
+            )
+            quality.save()
+
+            # Set the 'used' flag of the Data object to True
+            entry.update(used=True)
+
+        # Retrieve all quality entries
+        quality_data = Quality.objects()
+
+        return render_template('data.html', data=quality_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
