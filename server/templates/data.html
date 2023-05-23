@@ -2,17 +2,24 @@
 <html>
 <head>
     <title>Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <style>
+    #map {
+      height: 400px;
+    }
+    </style>
     <script>
     $(document).ready(function() {
-        // Function to refresh the data
         var refreshData = debounce(function() {
             $.ajax({
                 url: '/data',
                 type: 'GET',
                 success: function(response) {
                     // Update the data container with the new data
-                    $('#data-container').html(response);
+                    $('#data-container').html($(response).find('#data-container').html());
+                    updateMarkers();
                 },
                 error: function(error) {
                     console.log(error);
@@ -31,21 +38,50 @@
 
         // Call the refreshData() function to start the initial data update
         refreshData();
+
+        var map = L.map('map').setView([0, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+        }).addTo(map);
+
+        {% for item in data %}
+        var value = {{ item.value }};
+        var color = getColor(value);
+        var marker = L.circleMarker([{{ item.latitude }}, {{ item.longitude }}], {
+          radius: 5,
+          fillColor: color,
+          color: '#000',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(map);
+        marker.bindPopup(
+          "Value: " + value + "<br>" +
+          "Longitude: {{ item.longitude }}<br>" +
+          "Latitude: {{ item.latitude }}"
+        );
+        {% endfor %}
     });
+
+    function getColor(value) {
+        if (value >= 0 && value < 3) {
+            return 'green';
+        } else if (value >= 3 && value < 7) {
+            return 'yellow';
+        } else if (value >= 7 && value <= 10) {
+            return 'red';
+        } else {
+            return 'blue'; // Default color if value is outside the specified range
+        }
+    }
     </script>
 </head>
 <body>
     <div id="data-container">
         <h2>Data</h2>
-        {% for item in data %}
-        <ul>
-            <li>
-                gyroX: {{ item.gyroX }}, gyroY: {{ item.gyroY }}, gyroZ: {{ item.gyroZ }},
-                accelerometerX: {{ item.accelerometerX }}, accelerometerY: {{ item.accelerometerY }}, accelerometerZ: {{ item.accelerometerZ }},
-                longitude: {{ item.longitude }}, latitude: {{ item.latitude }}, timestamp: {{ item.timestamp }}
-            </li>
-        </ul>
-        {% endfor %}
+        <div id="map"></div>
         <a href="javascript:history.go(-1)">Go Back</a>
     </div>
 </body>
