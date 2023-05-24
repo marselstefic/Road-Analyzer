@@ -9,7 +9,7 @@ CORS(app)
 # MongoDB configuration
 app.config['MONGODB_SETTINGS'] = {
     'db': 'projekt',
-    'host': 'mongodb://localhost/projekt'
+    'host': 'mongodb://127.0.0.1/projekt'
 }
 
 db = MongoEngine(app)

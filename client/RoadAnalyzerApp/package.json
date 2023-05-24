@@ -18,7 +18,8 @@
     "react-native-sensors": "^7.3.6",
     "react-native-web": "~0.18.10",
     "expo-sensors": "~12.1.1",
-    "expo-location": "~15.1.1"
+    "expo-location": "~15.1.1",
+    "react-native-safe-area-context": "4.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
