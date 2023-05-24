@@ -6,28 +6,34 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Accelerometer } from "expo-sensors";
+import { Accelerometer, Gyroscope } from "expo-sensors";
 import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
   const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
+  const [gyroData, setGyroData] = useState({ x: 0, y: 0, z: 0 });
   const [subscription, setSubscription] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const _slow = () => {
     Accelerometer.setUpdateInterval(1000);
+    Gyroscope.setUpdateInterval(1000);
   };
 
   const _fast = () => {
     Accelerometer.setUpdateInterval(16);
+    Gyroscope.setUpdateInterval(16);
   };
 
   const _subscribe = async () => {
     setSubscription([
       Accelerometer.addListener((accelerometerData) => {
         setAccelData(accelerometerData);
+      }),
+      Gyroscope.addListener((gyroscopeData) => {
+        setGyroData(gyroscopeData);
       }),
     ]);
 
@@ -94,6 +100,9 @@ export default function App() {
         <Text style={styles.text}>Accel X: {accelData.x}</Text>
         <Text style={styles.text}>Accel Y: {accelData.y}</Text>
         <Text style={styles.text}>Accel Z: {accelData.z}</Text>
+        <Text style={styles.text}>Gyro X: {gyroData.x}</Text>
+        <Text style={styles.text}>Gyro Y: {gyroData.y}</Text>
+        <Text style={styles.text}>Gyro Z: {gyroData.z}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={subscription ? _unsubscribe : _subscribe}
