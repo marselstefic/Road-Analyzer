@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask import Blueprint
+from datetime import datetime 
 
 app = Flask(__name__)
 CORS(app)
@@ -41,11 +42,14 @@ def get_all_data():
 def add_data():
     try:
         data = request.get_json()
+        data['timestamp'] = datetime.fromtimestamp(data['timestamp'] / 1000.0)  # convert to datetime
         new_data = Data(**data)
         new_data.save()
         return jsonify({'message': 'Data saved successfully'}), 201
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
+
 
 app.register_blueprint(data_routes)
 
@@ -54,4 +58,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')

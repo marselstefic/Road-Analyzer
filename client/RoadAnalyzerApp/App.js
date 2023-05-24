@@ -13,13 +13,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function App() {
   const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
   const [gyroData, setGyroData] = useState({ x: 0, y: 0, z: 0 });
-  const [subscription, setSubscription] = useState(null);
+  const [subscription, setSubscription] = useState([]);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const _slow = () => {
-    Accelerometer.setUpdateInterval(1000);
-    Gyroscope.setUpdateInterval(1000);
+    Accelerometer.setUpdateInterval(2000);
+    Gyroscope.setUpdateInterval(2000);
   };
 
   const _fast = () => {
@@ -27,13 +27,55 @@ export default function App() {
     Gyroscope.setUpdateInterval(16);
   };
 
+  const postDataToServer = async (data) => {
+    try {
+      const response = await fetch("http://192.168.0.102:5000/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        console.log("Data posted successfully");
+      }
+    } catch (error) {
+      console.error("Failed to post data: " + error);
+    }
+  };
+
   const _subscribe = async () => {
     setSubscription([
       Accelerometer.addListener((accelerometerData) => {
         setAccelData(accelerometerData);
+        postDataToServer({
+          accelerometerX: accelerometerData.x,
+          accelerometerY: accelerometerData.y,
+          accelerometerZ: accelerometerData.z,
+          gyroX: gyroData.x,
+          gyroY: gyroData.y,
+          gyroZ: gyroData.z,
+          latitude: location ? location.latitude : null,
+          longitude: location ? location.longitude : null,
+          timestamp: location ? location.timestamp : null,
+        });
       }),
       Gyroscope.addListener((gyroscopeData) => {
         setGyroData(gyroscopeData);
+        postDataToServer({
+          accelerometerX: accelData.x,
+          accelerometerY: accelData.y,
+          accelerometerZ: accelData.z,
+          gyroX: gyroscopeData.x,
+          gyroY: gyroscopeData.y,
+          gyroZ: gyroscopeData.z,
+          latitude: location ? location.latitude : null,
+          longitude: location ? location.longitude : null,
+          timestamp: location ? location.timestamp : null,
+        });
       }),
     ]);
 
@@ -58,10 +100,8 @@ export default function App() {
   };
 
   const _unsubscribe = () => {
-    if (subscription) {
-      subscription.forEach((sub) => sub && sub.remove());
-    }
-    setSubscription(null);
+    subscription.forEach((sub) => sub && sub.remove());
+    setSubscription([]);
   };
 
   useEffect(() => {
@@ -71,15 +111,9 @@ export default function App() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
-      _subscribe();
     })();
 
-    return () => {
-      if (Array.isArray(subscription)) {
-        _unsubscribe();
-      }
-    };
+    return () => _unsubscribe();
   }, []);
 
   let text = "Waiting..";
@@ -105,10 +139,10 @@ export default function App() {
         <Text style={styles.text}>Gyro Z: {gyroData.z}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            onPress={subscription ? _unsubscribe : _subscribe}
+            onPress={subscription.length > 0 ? _unsubscribe : _subscribe}
             style={styles.button}
           >
-            <Text>{subscription ? "On" : "Off"}</Text>
+            <Text>{subscription.length > 0 ? "Off" : "On"}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={_slow}
@@ -128,12 +162,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "lightblue",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
-    flex: 1,
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
