@@ -67,19 +67,14 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        password2 = request.form['password2']
+        if request.is_json:
+            data = request.get_json()  # load data as JSON
+        else:  # form data
+            data = request.form
 
-        if password != password2:
-            return jsonify({'error': 'Passwords do not match'}), 400
-
-        if User.objects(username=username):
-            return jsonify({'error': 'Username already exists'}), 400
-
-        if User.objects(email=email):
-            return jsonify({'error': 'Email is already in use'}), 400
+        username = data['username']
+        email = data['email']
+        password = data['password']
 
         # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -89,7 +84,6 @@ def register():
         new_user.save()
 
         return jsonify({'message': 'Registration successful'}), 201
-
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -149,4 +143,4 @@ def get_all_data():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
