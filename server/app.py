@@ -2,7 +2,10 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import Bcrypt
+from decouple import config
 import math
+
+MONGODB_URI = config('MONGODB_URI')
 
 app = Flask(__name__)
 CORS(app)
@@ -13,7 +16,7 @@ app.secret_key = 'gyes'
 # MongoDB configuration
 app.config['MONGODB_SETTINGS'] = {
     'db': 'projekt',
-    'host': 'mongodb://127.0.0.1/projekt'
+    'host': MONGODB_URI
 }
 
 db = MongoEngine(app)
