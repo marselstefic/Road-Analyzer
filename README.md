@@ -31,7 +31,7 @@ Once everything is setup, you must configure database connection inside server/a
 Launch backend and website with (Starting from root folder "Road-Analyzer"):
 ```bash
 cd server
-pip app.py
+python app.py
 ```
 
 Launch frontend with (Starting from the root foler like before):
