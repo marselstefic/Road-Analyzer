@@ -128,35 +128,46 @@ export default function SensorScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          {text}
-          {"\n"}
-          Accelerometer: (in gs where 1g = 9.81 m/s^2)
-        </Text>
-        <Text style={styles.text}>Accel X: {accelData.x}</Text>
-        <Text style={styles.text}>Accel Y: {accelData.y}</Text>
-        <Text style={styles.text}>Accel Z: {accelData.z}</Text>
-        <Text style={styles.text}>Gyro X: {gyroData.x}</Text>
-        <Text style={styles.text}>Gyro Y: {gyroData.y}</Text>
-        <Text style={styles.text}>Gyro Z: {gyroData.z}</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={subscription.length > 0 ? _unsubscribe : _subscribe}
-            style={styles.button}
-          >
-            <Text>{subscription.length > 0 ? "Off" : "On"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={_slow}
-            style={[styles.button, styles.middleButton]}
-          >
-            <Text>Slow</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={_fast} style={styles.button}>
-            <Text>Fast</Text>
-          </TouchableOpacity>
-        </View>
+
+      <Card style={styles.card}>
+        <Card.Title title="Accelerometer Data" />
+        <Card.Content>
+          <Text style={styles.text}>Accel X: {accelData.x}</Text>
+          <Text style={styles.text}>Accel Y: {accelData.y}</Text>
+          <Text style={styles.text}>Accel Z: {accelData.z}</Text>
+        </Card.Content>
+      </Card>
+      <Card style={styles.card}>
+        <Card.Title title="Gyro Data" />
+        <Card.Content>
+          <Text style={styles.text}>Gyro X: {gyroData.x}</Text>
+          <Text style={styles.text}>Gyro Y: {gyroData.y}</Text>
+          <Text style={styles.text}>Gyro Z: {gyroData.z}</Text>
+        </Card.Content>
+      </Card>
+      <View style={styles.buttonContainer}>
+        <Button
+          icon="power"
+          mode="contained"
+          onPress={subscription.length > 0 ? _unsubscribe : _subscribe}
+        >
+          {subscription.length > 0 ? "Off" : "On"}
+        </Button>
+        <Button
+          icon="timer-sand"
+          mode="contained"
+          onPress={_slow}
+          style={styles.middleButton}
+        >
+          Slow
+        </Button>
+        <Button
+          icon="timer"
+          mode="contained"
+          onPress={_fast}
+        >
+          Fast
+        </Button>
       </View>
     </SafeAreaView>
   );
