@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Card, Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {
   Platform,
   StyleSheet,
