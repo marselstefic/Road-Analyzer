@@ -128,7 +128,11 @@ export default function SensorScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-
+      <Text style={styles.text}>
+        {text}
+        {"\n"}
+        Accelerometer: (in gs where 1g = 9.81 m/s^2)
+      </Text>
       <Card style={styles.card}>
         <Card.Title title="Accelerometer Data" />
         <Card.Content>
