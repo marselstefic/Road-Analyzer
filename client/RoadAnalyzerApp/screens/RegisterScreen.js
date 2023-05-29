@@ -1,6 +1,7 @@
 // RegisterScreen.js
 import React, { useState } from 'react';
-import { Button, View, TextInput, StyleSheet, Text, Alert } from 'react-native';
+import { Button, View, TextInput, StyleSheet, Text, Alert, KeyboardAvoidingView  } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -40,6 +41,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Icon name="login" size={40} color="#000" />
       <TextInput 
         style={styles.input} 
         placeholder="Email" 
