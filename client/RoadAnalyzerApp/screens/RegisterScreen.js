@@ -69,6 +69,7 @@ export default function RegisterScreen({ navigation }) {
         secureTextEntry 
       />
       <Button
+        style={styles.button}
         title="Register"
         onPress={registerUser}
       />
@@ -89,6 +90,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    marginTop: 10,
+    padding: 8,
+  },
+  button: {
     marginTop: 10,
     padding: 8,
   },

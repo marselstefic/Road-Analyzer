@@ -12,12 +12,11 @@ export default function RegisterScreen({ navigation }) {
 
     try {
       const response = await fetch("http://192.168.64.102:5000/login", {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email,
           username: username,
           password: password,
         }),
@@ -39,12 +38,6 @@ export default function RegisterScreen({ navigation }) {
       <Icon name="login" size={40} color="#000" />
       <TextInput 
         style={styles.input} 
-        placeholder="Email" 
-        value={email} 
-        onChangeText={setEmail} 
-      />
-      <TextInput 
-        style={styles.input} 
         placeholder="Username" 
         value={username} 
         onChangeText={setUsername} 
@@ -56,16 +49,9 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setPassword} 
         secureTextEntry 
       />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Confirm Password" 
-        value={confirmPassword} 
-        onChangeText={setConfirmPassword} 
-        secureTextEntry 
-      />
       <Button
-        title="Register"
-        onPress={registerUser}
+        title="Login"
+        onPress={loginUser}
       />
     </View>
   );

@@ -11,15 +11,20 @@ export default function RegisterScreen({ navigation }) {
     navigation.navigate('LoginScreen');
   }
 
+  const ToRegisterScreen = async () => {
+    navigation.navigate('RegisterScreen');
+  }
+
+
   return (
     <View style={styles.container}>
       <Button
-        title="Register"
+        title="Login"
         onPress={ToLoginScreen}
       />
       <Button
-        title="Login"
-        onPress={ToLoginScreen}
+        title="Register"
+        onPress={ToRegisterScreen}
       />
     </View>
   );
