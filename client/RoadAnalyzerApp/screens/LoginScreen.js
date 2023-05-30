@@ -9,27 +9,24 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const loginUser = async () => {
-
     try {
-      const response = await fetch("http://192.168.64.102:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+  
+      const response = await fetch('http://192.168.64.102:5000/login', {
+        method: 'POST',
+        body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
-        console.log("User registered successfully");
-        navigation.navigate('SensorScreen'); // Navigate to SensorScreen after successful registration
+        console.log('User logged in successfully');
+        navigation.navigate('SensorScreen');
       }
     } catch (error) {
-      console.error("Failed to register user: " + error);
+      console.error('Failed to log in: ' + error);
     }
   };
 
