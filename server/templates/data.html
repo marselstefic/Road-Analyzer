@@ -7,6 +7,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
     #map {
       height: 400px;
@@ -41,7 +45,8 @@
         // Call the refreshData() function to start the initial data update
         refreshData();
 
-        var map = L.map('map').setView([0, 0], 2);
+        var map = L.map('map').setView([46.1512, 14.9955], 7);
+
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -82,12 +87,12 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/"> Home </a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color: rgba(255, 255, 255, 0.8);">
+        <a class="navbar-brand" href="/"><i class="fas fa-wave-square"></i><b>Road-Analyzer</b></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse  justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
                 {% if 'username' not in session %}
                     <li class="nav-item">
@@ -104,9 +109,26 @@
             </ul>
         </div>
     </nav>
-    <div id="data-container">
-        <div id="map"></div>
-        <a href="javascript:history.go(-1)">Go Back</a>
+    <div id="data-container" class="pt-5">
+        <img src="{{ url_for('static', filename='avtocesta.jpg') }}" alt="Autoban" style="width:100%;">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="map-title">Mapa</h2>
+                <div id="map"></div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="card-title">What is Road-Analyzer?</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            Road-Analyzer je aplikacija za vizualizacijo in analizo podatkov o cestah. Omogoča vam ogled podatkov na interaktivni mapi in izvajanje različnih analiz na podlagi teh podatkov. Z Road-Analyzerjem lahko pridobite dragocene vpoglede v stanje cest, njihovo uporabo in druge pomembne informacije.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
 </body>
 </html>
