@@ -107,16 +107,11 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout', methods=['POST'])
 def logout():
-    if request.method == 'POST':
-        session.pop('username', None)
-        return redirect(url_for('get_all_data'))
-    else:
-        if 'username' in session:
-            return render_template('logout.html')
-        else:
-            return redirect(url_for('get_all_data'))
+    session.pop('username', None)
+    return '', 200
+
 
 @app.route('/', methods=['GET'])
 def get_all_data():
