@@ -6,6 +6,8 @@ from decouple import config
 import math
 
 MONGODB_URI = config('MONGODB_URI')
+#MONGODB_URI = 'mongodb://127.0.0.1/projekt'
+
 
 app = Flask(__name__)
 CORS(app)
@@ -62,10 +64,7 @@ def process_data(data):
 
     return scaled_value
 
-# Routes
-@app.route('/')
-def index():
-    return render_template('index.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -101,7 +100,7 @@ def login():
         # Check if the user exists and the password is correct
         if user and bcrypt.check_password_hash(user.password, password):
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for('get_all_data'))
         else:
             return jsonify({'error': 'Invalid username or password'}), 401
 
@@ -111,14 +110,14 @@ def login():
 def logout():
     if request.method == 'POST':
         session.pop('username', None)
-        return redirect(url_for('index'))
+        return redirect(url_for('get_all_data'))
     else:
         if 'username' in session:
             return render_template('logout.html')
         else:
-            return redirect(url_for('index'))
+            return redirect(url_for('get_all_data'))
 
-@app.route('/data', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_all_data():
     try:
         # Retrieve all unused data
