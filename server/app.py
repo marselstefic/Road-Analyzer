@@ -68,6 +68,7 @@ def process_data(data):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
     if request.method == 'POST':
         if request.is_json:
             data = request.get_json()  # load data as JSON
@@ -85,7 +86,7 @@ def register():
         new_user = User(username=username, email=email, password=hashed_password)
         new_user.save()
 
-        return jsonify({'message': 'Registration successful'}), 201
+        return redirect(url_for('get_all_data'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
