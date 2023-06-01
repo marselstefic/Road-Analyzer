@@ -15,6 +15,7 @@ CORS(app)
 # Set a secret key for session management
 app.secret_key = 'gyes'
 
+
 # MongoDB configuration
 app.config['MONGODB_SETTINGS'] = {
     'db': 'projekt',
@@ -35,6 +36,7 @@ class Data(db.Document):
     longitude = db.FloatField()
     latitude = db.FloatField()
     used = db.BooleanField()
+    postedBy = db.StringField() 
 
 class User(db.Document):
     username = db.StringField(unique=True)
