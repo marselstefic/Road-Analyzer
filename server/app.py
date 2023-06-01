@@ -144,6 +144,18 @@ def get_all_data():
         return render_template('data.html', data=quality_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/data', methods=['POST'])
+def add_data():
+    try:
+        data = request.get_json()
+        data['timestamp'] = datetime.fromtimestamp(data['timestamp'] / 1000.0)  # convert to datetime
+        new_data = Data(**data)
+        new_data.save()
+        return jsonify({'message': 'Data saved successfully'}), 201
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
