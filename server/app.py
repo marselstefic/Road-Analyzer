@@ -36,7 +36,7 @@ class Data(db.Document):
     longitude = db.FloatField()
     latitude = db.FloatField()
     used = db.BooleanField()
-    postedBy = db.StringField() 
+    postedBy = db.StringField()
 
 class User(db.Document):
     username = db.StringField(unique=True)
@@ -146,7 +146,6 @@ def get_all_data():
 def add_data():
     try:
         data = request.get_json()
-        data['timestamp'] = datetime.fromtimestamp(data['timestamp'] / 1000.0)  # convert to datetime
         new_data = Data(**data)
         new_data.save()
         return jsonify({'message': 'Data saved successfully'}), 201
@@ -155,4 +154,5 @@ def add_data():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(host='0.0.0.0')

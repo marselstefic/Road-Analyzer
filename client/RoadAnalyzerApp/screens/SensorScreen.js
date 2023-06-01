@@ -13,7 +13,9 @@ import { Accelerometer, Gyroscope } from "expo-sensors";
 import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function SensorScreen() {
+export default function SensorScreen({ route }) {
+
+  const { postedBy } = route.params;
   const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
   const [gyroData, setGyroData] = useState({ x: 0, y: 0, z: 0 });
   const [subscription, setSubscription] = useState([]);
@@ -37,7 +39,7 @@ export default function SensorScreen() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data, postedBy),
       });
 
       if (!response.ok) {
@@ -63,7 +65,7 @@ export default function SensorScreen() {
           gyroZ: gyroData.z,
           latitude: location ? location.latitude : null,
           longitude: location ? location.longitude : null,
-          timestamp: location ? location.timestamp : null,
+          postedBy: postedBy,
         });
       }),
       Gyroscope.addListener((gyroscopeData) => {
@@ -77,7 +79,6 @@ export default function SensorScreen() {
           gyroZ: gyroscopeData.z,
           latitude: location ? location.latitude : null,
           longitude: location ? location.longitude : null,
-          timestamp: location ? location.timestamp : null,
         });
       }),
     ]);
@@ -92,9 +93,8 @@ export default function SensorScreen() {
         (newLocation) => {
           const {
             coords: { latitude, longitude },
-            timestamp,
           } = newLocation;
-          setLocation({ latitude, longitude, timestamp });
+          setLocation({ latitude, longitude });
         }
       );
     } catch (error) {
@@ -123,7 +123,7 @@ export default function SensorScreen() {
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
-    text = `Latitude: ${location.latitude}, Longitude: ${location.longitude}, Timestamp: ${location.timestamp}`;
+    text = `Latitude: ${location.latitude}, Longitude: ${location.longitude}`;
   }
 
   return (

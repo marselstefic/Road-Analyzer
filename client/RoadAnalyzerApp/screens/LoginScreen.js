@@ -23,7 +23,7 @@ export default function RegisterScreen({ navigation }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         console.log('User logged in successfully');
-        navigation.navigate('SensorScreen');
+        navigation.navigate('SensorScreen', { postedBy: username });
       }
     } catch (error) {
       console.error('Failed to log in: ' + error);
