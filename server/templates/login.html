@@ -4,6 +4,16 @@
     <title>Login</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -11,7 +21,7 @@
         }
 
         .container {
-            max-width: 400px;
+            max-width: 800px;
             background-color: #fff;
             padding: 30px;
             border-radius: 5px;
@@ -26,27 +36,43 @@
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color: rgba(101, 114, 114, 0.747);">
+        <a class="navbar-brand" href="/"><i class="fas fa-wave-square"></i><b>Road-Analyzer</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
     <div class="container">
-        <h2>Login</h2>
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Leva stran: Slika -->
+                <img src="/static/login_image.jpg" alt="Login Image" class="img-fluid">
             </div>
-            
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+            <div class="col-md-6">
+                <!-- Desna stran: Obrazec za prijavo -->
+                <h2>Login</h2>
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group row d-flex justify-content-between">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="/register" class="btn btn-primary">Register</a>
+                        </div>
+                    </div>
+                </form>
             </div>
-            
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-        </form>
-        <div class="text-center mt-3">
-            <a href="javascript:history.go(-1)" class="btn btn-primary">Go Back</a>
         </div>
     </div>
+    
 
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

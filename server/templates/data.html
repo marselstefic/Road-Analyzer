@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
     #map {
       height: 400px;
@@ -39,7 +43,8 @@
         // Call the refreshData() function to start the initial data update
         refreshData();
 
-        var map = L.map('map').setView([0, 0], 2);
+        var map = L.map('map').setView([46.1512, 14.9955], 7);
+
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -76,13 +81,72 @@
             return 'blue'; // Default color if value is outside the specified range
         }
     }
+
+    function confirmLogout() {
+    var logout = confirm("Do you want to logout?");
+    if (logout) {
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            success: function() {
+                window.location.href = "/";
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        }
+    }
+
     </script>
 </head>
 <body>
-    <div id="data-container">
-        <h2>Data</h2>
-        <div id="map"></div>
-        <a href="javascript:history.go(-1)">Go Back</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color: rgba(255, 255, 255, 0.8);">
+        <a class="navbar-brand" href="/"><i class="fas fa-wave-square"></i><b>Road-Analyzer</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse  justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if 'username' not in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div id="data-container" class="pt-5">
+        <img src="{{ url_for('static', filename='avtocesta.jpg') }}" alt="Autoban" style="width:100%;">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="map-title">Mapa</h2>
+                <div id="map"></div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="card-title">What is Road-Analyzer?</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            Road-Analyzer je aplikacija za vizualizacijo in analizo podatkov o cestah. <br>
+                            Omogoča vam ogled podatkov na interaktivni mapi in izvajanje različnih analiz na podlagi teh podatkov. <br><br>
+                            Z Road-Analyzerjem lahko pridobite dragocene vpoglede v stanje cest, njihovo uporabo in druge pomembne informacije. <br>
+                            Projekat so delali študenti Univerze v Maribor, oz. Luka Balaban, Marsel Štefić in Uroš Škof
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
 </body>
 </html>
