@@ -79,6 +79,7 @@ export default function SensorScreen({ route }) {
           gyroZ: gyroscopeData.z,
           latitude: location ? location.latitude : null,
           longitude: location ? location.longitude : null,
+          postedBy: postedBy,
         });
       }),
     ]);
