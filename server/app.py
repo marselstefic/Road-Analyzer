@@ -142,6 +142,38 @@ def get_all_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/data.json', methods=['GET'])
+def get_data_json():
+    try:
+        # Retrieve all unused data
+        data = Data.objects(used=False)
+
+        # Process and save each data entry as Quality
+        for entry in data:
+            scaled_value = process_data(entry.to_mongo().to_dict())
+
+            quality = Quality(
+                value=scaled_value,
+                longitude=entry.longitude,
+                latitude=entry.latitude,
+            )
+            quality.save()
+
+            # Set the 'used' flag of the Data object to True
+            entry.update(used=True)
+
+        # Retrieve all quality entries
+        quality_data = Quality.objects()
+
+        # Convert data to dictionary
+        quality_data_dict = [item.to_mongo().to_dict() for item in quality_data]
+
+        return jsonify(quality_data_dict)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
 @app.route('/data', methods=['POST'])
 def add_data():
     try:
