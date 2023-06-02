@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import Bcrypt
-from decouple import config
 import math
 
 #MONGODB_URI = config('MONGODB_URI')
@@ -173,8 +172,16 @@ def get_my_data():
 def add_data():
     try:
         data = request.get_json()
-        new_data = Data(**data)
-        new_data.save()
+        processed_value = process_data(data)  # Process the sensor data
+
+        # Create a new Quality object with processed data
+        quality = Quality(
+            value=processed_value,
+            longitude=data.get('longitude'),
+            latitude=data.get('latitude')
+        )
+        quality.save()  # Save the Quality object to the database
+
         return jsonify({'message': 'Data saved successfully'}), 201
     except Exception as e:
         print(str(e))
