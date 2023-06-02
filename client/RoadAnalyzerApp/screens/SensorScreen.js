@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Card, Button } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import {
   Platform,
@@ -14,7 +14,6 @@ import * as Location from "expo-location";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SensorScreen({ route }) {
-
   const { postedBy } = route.params;
   const [accelData, setAccelData] = useState({ x: 0, y: 0, z: 0 });
   const [gyroData, setGyroData] = useState({ x: 0, y: 0, z: 0 });
@@ -32,14 +31,26 @@ export default function SensorScreen({ route }) {
     Gyroscope.setUpdateInterval(16);
   };
 
-  const postDataToServer = async (data) => {
+  const postDataToServer = async (accelerometerData, gyroscopeData) => {
     try {
-      const response = await fetch("http://192.168.64.102:5000/data", {
+      const data = {
+        accelerometerX: accelerometerData.x,
+        accelerometerY: accelerometerData.y,
+        accelerometerZ: accelerometerData.z,
+        gyroX: gyroscopeData.x,
+        gyroY: gyroscopeData.y,
+        gyroZ: gyroscopeData.z,
+        latitude: location ? location.latitude : null,
+        longitude: location ? location.longitude : null,
+        postedBy: postedBy,
+      };
+
+      const response = await fetch("http://164.8.162.93:5000/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data, postedBy),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -56,30 +67,11 @@ export default function SensorScreen({ route }) {
     setSubscription([
       Accelerometer.addListener((accelerometerData) => {
         setAccelData(accelerometerData);
-        postDataToServer({
-          accelerometerX: accelerometerData.x,
-          accelerometerY: accelerometerData.y,
-          accelerometerZ: accelerometerData.z,
-          gyroX: gyroData.x,
-          gyroY: gyroData.y,
-          gyroZ: gyroData.z,
-          latitude: location ? location.latitude : null,
-          longitude: location ? location.longitude : null,
-          postedBy: postedBy,
-        });
+        postDataToServer(accelerometerData, gyroData);
       }),
       Gyroscope.addListener((gyroscopeData) => {
         setGyroData(gyroscopeData);
-        postDataToServer({
-          accelerometerX: accelData.x,
-          accelerometerY: accelData.y,
-          accelerometerZ: accelData.z,
-          gyroX: gyroscopeData.x,
-          gyroY: gyroscopeData.y,
-          gyroZ: gyroscopeData.z,
-          latitude: location ? location.latitude : null,
-          longitude: location ? location.longitude : null,
-        });
+        postDataToServer(accelData, gyroscopeData);
       }),
     ]);
 
@@ -165,11 +157,7 @@ export default function SensorScreen({ route }) {
         >
           Slow
         </Button>
-        <Button
-          icon="timer"
-          mode="contained"
-          onPress={_fast}
-        >
+        <Button icon="timer" mode="contained" onPress={_fast}>
           Fast
         </Button>
       </View>
