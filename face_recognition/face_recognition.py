@@ -20,3 +20,6 @@ counter2 = 0
 reference_imgs = []
 for filename in glob.glob('reference_images/*.jpg'):  # load all reference images
     reference_imgs.append(cv2.imread(filename))
+
+# Split reference images into training and testing sets
+train_images, test_images = train_test_split(reference_imgs, test_size=0.2, random_state=42)
