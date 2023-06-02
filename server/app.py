@@ -5,8 +5,8 @@ from flask_bcrypt import Bcrypt
 from decouple import config
 import math
 
-MONGODB_URI = config('MONGODB_URI')
-#MONGODB_URI = 'mongodb://127.0.0.1/projekt'
+#MONGODB_URI = config('MONGODB_URI')
+MONGODB_URI = 'mongodb://127.0.0.1/projekt'
 
 
 app = Flask(__name__)
@@ -142,8 +142,8 @@ def get_all_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-@app.route('/data.json', methods=['GET'])
-def get_data_json():
+@app.route('/mydata', methods=['GET'])
+def get_my_data():
     try:
         # Retrieve all unused data
         data = Data.objects(used=False)
@@ -165,14 +165,9 @@ def get_data_json():
         # Retrieve all quality entries
         quality_data = Quality.objects()
 
-        # Convert data to dictionary
-        quality_data_dict = [item.to_mongo().to_dict() for item in quality_data]
-
-        return jsonify(quality_data_dict)
-
+        return render_template('mydata.html', data=quality_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
     
 @app.route('/data', methods=['POST'])
 def add_data():
