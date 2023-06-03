@@ -22,7 +22,7 @@ for filename in glob.glob('reference_images/*.jpg'):  # load all reference image
     reference_imgs.append(cv2.imread(filename))
 
 # Split reference images into training and testing sets
-train_images, test_images = train_test_split(reference_imgs, test_size=0.2, random_state=42)
+train_images, test_images = train_test_split(reference_imgs, test_size=0.4, random_state=60)
 
 face_match = False
 face_detected = False
@@ -46,7 +46,7 @@ while True:
 
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        faces = face_cascade.detectMultiScale(gray, 1.5, 5)
 
         if len(faces) > 0:  # if a face is detected
             face_detected = True
@@ -65,14 +65,14 @@ while True:
                 counter2 += 1
                 print("The face matches the reference images!")
 
-                if counter2 > 20:
-                    cv2.putText(frame, "MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+                if counter2 > 40:
+                    cv2.putText(frame, "MATCH!", (40, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
                 else:
-                    cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+                    cv2.putText(frame, "NO MATCH!", (40, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
             else:
-                cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+                cv2.putText(frame, "NO MATCH!", (40, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
         else:
-            cv2.putText(frame, "No Face Detected", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+            cv2.putText(frame, "No Face Detected", (40, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
 
         cv2.imshow('video', frame)
         
