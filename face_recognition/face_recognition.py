@@ -35,5 +35,16 @@ def check_face(frame):
         except ValueError:
             pass
 
+    ret, frame = cap.read()
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    if len(faces) > 1:  # if a face is detected
+        start_time = time  # reset the start time
+        face_detected = True
+    else:
+        face_detected = False
+
 cv2.destroyAllWindows()
 cap.release()
