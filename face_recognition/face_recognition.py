@@ -45,6 +45,14 @@ def check_face(frame):
         face_detected = True
     else:
         face_detected = False
+    
+    if face_detected:
+            if counter % 30 == 0:
+                try:
+                    threading.Thread(target=check_face, args=(frame.copy(),)).start()
+                except ValueError:
+                    pass
+            counter += 1
 
 cv2.destroyAllWindows()
 cap.release()
