@@ -1,6 +1,26 @@
 # RoadAnalyzer
 Project for analyzing road qualities using:
-<h2> Website: </h2> base html, css and javascript for the website, using expo as a platform for mobile app and flask as the backend for the website and the mobile app.
+<h2> Website: </h2> 
+<ul>
+    <li>HTML</li>
+    <li>CSS</li>
+    <li>Javascript</li>
+    <li>Leaflet.js library</li>
+</ul>
+
+<h2> Mobile app: </h2> 
+<ul>
+    <li>Platform: Expo (React Native)</li>
+    <li>Language: Javascript</li>
+</ul>
+
+<h2> Backend/server: </h2> 
+<ul>
+    <li>Platform: Flask</li>
+    <li>Language: python</li>
+</ul>
+
+using expo as a platform for mobile app and flask as the backend for the website and the mobile app.
 
 # Requirements
 
