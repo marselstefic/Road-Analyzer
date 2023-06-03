@@ -22,6 +22,19 @@ counter2 = 0
 if not os.path.exists('reference_images'):
     os.makedirs('reference_images')
 
+# If there are no images in the 'reference_images' directory, capture and save 20 frames from the webcam
+if not glob.glob('reference_images/*.jpg'):
+    while counter < 30:
+        ret, frame = cap.read()
+        if ret:
+            cv2.imshow('video', frame)
+            cv2.imwrite(f'reference_images/img_{counter}.jpg', frame)
+            counter += 1
+
+        key = cv2.waitKey(1)
+        if key == ord('q'):  # quit if 'q' is pressed
+            break
+
 # Split reference images into training and testing sets
 train_images, test_images = train_test_split(reference_images, test_size=0.2, random_state=42)
 
