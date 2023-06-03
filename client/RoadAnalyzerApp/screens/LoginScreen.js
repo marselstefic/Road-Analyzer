@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
       formData.append("username", username);
       formData.append("password", password);
 
-      const response = await fetch("http://164.8.162.93:5000/login", {
+      const response = await fetch("http://192.168.64.102:5000/login", {
         method: "POST",
         body: formData,
       });

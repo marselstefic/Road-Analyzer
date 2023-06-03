@@ -45,7 +45,7 @@ export default function SensorScreen({ route }) {
         postedBy: postedBy,
       };
 
-      const response = await fetch("http://164.8.162.93:5000/data", {
+      const response = await fetch("http://192.168.64.102:5000/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

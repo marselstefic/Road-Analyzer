@@ -122,8 +122,6 @@ def get_all_data():
         # Retrieve the quality data posted by the logged-in user
         quality_data = Quality.objects()
 
-        print("Quality Data:", quality_data)  # Add this line for debugging
-
         # Compute the count of data points that fall in each range
         counts = {'0-3': 0, '3-7': 0, '7-10': 0}
         for data in quality_data:
@@ -133,6 +131,8 @@ def get_all_data():
                 counts['3-7'] += 1
             elif 7 <= data.value <= 10:
                 counts['7-10'] += 1
+
+        print("Quality Data:", quality_data)  # Add this line for debugging
 
         return render_template('data.html', data=quality_data, counts=counts)
     except Exception as e:
@@ -148,24 +148,11 @@ def get_my_data():
         # Retrieve the quality data posted by the logged-in user
         quality_data = Quality.objects(postedBy=username)
 
-        quality_data_json = []
-        for quality in quality_data:
-            quality_data_json.append({
-                'value': quality.value,
-                'longitude': quality.longitude,
-                'latitude': quality.latitude,
-                'postedBy': quality.postedBy
-            })
+        print("Quality Data:", quality_data)  # Add this line for debugging
 
-        print("Quality Data:", quality_data_json)  # Add this line for debugging
-
-        return render_template('mydata.html', data=quality_data_json)
+        return render_template('mydata.html', data=quality_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-
-
     
 @app.route('/data', methods=['POST'])
 def add_data():
