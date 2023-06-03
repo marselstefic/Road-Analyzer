@@ -8,6 +8,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
     #map {
       height: 400px;
@@ -147,8 +149,44 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <canvas id="myChart"></canvas>
+            </div>        
         </div>
     </div>
+
+    <script>
+        // Initialize the chart
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['0-3', '3-7', '7-10'],
+                datasets: [{
+                    label: 'Number of Data Points',
+                    data: [{{ counts['0-3'] }}, {{ counts['3-7'] }}, {{ counts['7-10'] }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)', // Color for '0-3'
+                        'rgba(255, 206, 86, 0.2)', // Color for '3-7'
+                        'rgba(255, 99, 132, 0.2)' // Color for '7-10'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)', // Color for '0-3'
+                        'rgba(255, 206, 86, 1)', // Color for '3-7'
+                        'rgba(255, 99, 132, 1)' // Color for '7-10'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
     
 </body>
 </html>

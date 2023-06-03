@@ -124,7 +124,17 @@ def get_all_data():
 
         print("Quality Data:", quality_data)  # Add this line for debugging
 
-        return render_template('data.html', data=quality_data)
+        # Compute the count of data points that fall in each range
+        counts = {'0-3': 0, '3-7': 0, '7-10': 0}
+        for data in quality_data:
+            if 0 <= data.value < 3:
+                counts['0-3'] += 1
+            elif 3 <= data.value < 7:
+                counts['3-7'] += 1
+            elif 7 <= data.value <= 10:
+                counts['7-10'] += 1
+
+        return render_template('data.html', data=quality_data, counts=counts)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
