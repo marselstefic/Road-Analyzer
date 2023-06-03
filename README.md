@@ -20,7 +20,6 @@ Project for analyzing road qualities using:
     <li>Language: python</li>
 </ul>
 
-using expo as a platform for mobile app and flask as the backend for the website and the mobile app.
 
 # Requirements
 
@@ -44,7 +43,7 @@ pip install \-r "requirements.txt"
 ```
 
 Once everything is setup, you must configure database connection inside server/app.py (Line 19):
-'host': <Your database connection>
+'host': (Your database connection)
 
 # Run
 
