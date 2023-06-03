@@ -8,6 +8,7 @@ import {
   Text,
   Alert,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -49,7 +50,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Icon name="login" size={40} color="#000" />
+      <Icon name="account-plus" size={40} color="#000" style={styles.icon} />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -76,7 +77,9 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
-      <Button style={styles.button} title="Register" onPress={registerUser} />
+      <TouchableOpacity style={styles.button} onPress={registerUser}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -84,21 +87,35 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
     alignItems: "center",
     justifyContent: "center",
     padding: 16,
   },
   input: {
-    width: "100%",
-    height: 40,
-    borderColor: "gray",
+    width: "90%",
+    height: 50,
+    borderColor: "#d3d3d3",
     borderWidth: 1,
-    marginTop: 10,
-    padding: 8,
+    marginTop: 20,
+    borderRadius: 5,
+    paddingLeft: 10,
+    backgroundColor: "#fff",
+  },
+  icon: {
+    marginBottom: 20,
   },
   button: {
-    marginTop: 10,
-    padding: 8,
+    backgroundColor: '#1e90ff',
+    padding: 10,
+    marginTop: 20,
+    borderRadius: 5,
+    width: '90%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
