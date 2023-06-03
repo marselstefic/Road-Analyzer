@@ -53,6 +53,14 @@ def check_face(frame):
                 except ValueError:
                     pass
             counter += 1
+            if face_match:
+                counter2 += 1
+                print("The face matches the reference images!")
+
+                if counter2 > 10:
+                    cv2.putText(frame, "MATCH!", (20, 450) 2, (0, 255, 0), 3)
+                else:
+                    cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
 
 cv2.destroyAllWindows()
 cap.release()
