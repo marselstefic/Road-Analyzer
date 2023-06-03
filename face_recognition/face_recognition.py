@@ -3,6 +3,7 @@ import glob
 import time
 import cv2
 import numpy as np
+import os
 from deepface import DeepFace
 from sklearn.model_selection import train_test_split
 
@@ -17,12 +18,12 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 counter = 0
 counter2 = 0
 
-reference_imgs = []
-for filename in glob.glob('reference_images/*.jpg'):  # load all reference images
-    reference_imgs.append(cv2.imread(filename))
+# create a directory to store the reference images
+if not os.path.exists('reference_images'):
+    os.makedirs('reference_images')
 
 # Split reference images into training and testing sets
-train_images, test_images = train_test_split(reference_imgs, test_size=0.2, random_state=42)
+train_images, test_images = train_test_split(reference_images, test_size=0.2, random_state=42)
 
 face_match = False
 face_detected = False
