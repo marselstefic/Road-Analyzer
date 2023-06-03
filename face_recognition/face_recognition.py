@@ -24,12 +24,18 @@ for filename in glob.glob('reference_images/*.jpg'):  # load all reference image
 # Split reference images into training and testing sets
 train_images, test_images = train_test_split(reference_imgs, test_size=0.2, random_state=42)
 
+face_match = False
+face_detected = False
+
+# Load VGG-Face model
+vggface_model = DeepFace.build_model('VGG-Face')
+
 def check_face(frame):
     global face_match
     face_match = False
     for reference_img in train_images:
         try:
-            if DeepFace.verify(reference_img, frame, model_name='VGG-Face')['verified']:
+            if DeepFace.verify(frame, reference_img.copy(), model_name='VGG-Face')['verified']:
                 face_match = True
                 break  # if a match is found, no need to check the rest
         except ValueError:
