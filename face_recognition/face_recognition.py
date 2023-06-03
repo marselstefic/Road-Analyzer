@@ -23,3 +23,17 @@ for filename in glob.glob('reference_images/*.jpg'):  # load all reference image
 
 # Split reference images into training and testing sets
 train_images, test_images = train_test_split(reference_imgs, test_size=0.2, random_state=42)
+
+def check_face(frame):
+    global face_match
+    face_match = False
+    for reference_img in train_images:
+        try:
+            if DeepFace.verify(reference_img, frame, model_name='VGG-Face')['verified']:
+                face_match = True
+                break  # if a match is found, no need to check the rest
+        except ValueError:
+            pass
+
+cv2.destroyAllWindows()
+cap.release()
