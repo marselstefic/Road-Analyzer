@@ -35,17 +35,19 @@ def check_face(frame):
         except ValueError:
             pass
 
+while True:
     ret, frame = cap.read()
+
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
-        if len(faces) > 1:  # if a face is detected
-            start_time = time  # reset the start time
+        if len(faces) > 0:  # if a face is detected
             face_detected = True
+            start_time = time.time()  # reset the start time
         else:
             face_detected = False
-        
+
         if face_detected:
             if counter % 30 == 0:
                 try:
@@ -65,6 +67,8 @@ def check_face(frame):
                 cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
         else:
             cv2.putText(frame, "No Face Detected", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+
+        cv2.imshow('video', frame)
         
 
 cv2.destroyAllWindows()
