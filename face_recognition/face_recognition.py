@@ -57,8 +57,8 @@ def check_face(frame):
                 counter2 += 1
                 print("The face matches the reference images!")
 
-                if counter2 > 10:
-                    cv2.putText(frame, "MATCH!", (20, 450) 2, (0, 255, 0), 3)
+                if counter2 > 20:
+                    cv2.putText(frame, "MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
                 else:
                     cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
 
