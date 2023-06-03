@@ -35,8 +35,11 @@ if not glob.glob('reference_images/*.jpg'):
         if key == ord('q'):  # quit if 'q' is pressed
             break
 
+# load all reference images
+reference_imgs = [cv2.imread(filename) for filename in glob.glob('reference_images/*.jpg')]
+
 # Split reference images into training and testing sets
-train_images, test_images = train_test_split(reference_images, test_size=0.2, random_state=42)
+train_images, test_images = train_test_split(reference_imgs, test_size=0.3, random_state=42)
 
 face_match = False
 face_detected = False
