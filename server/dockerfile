@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1  #Nam pove kaksno sintakso naj docker uporablja in lokacijo docker syntax datoteke
+
+#V tej vrstici definiramo kaj naj bo osnovna slika (V nasem primeru bo to python, flask backend je definiran v pythonu)
+FROM python:3.8-slim-buster
+
+#Definiramo nas working directory
+WORKDIR /server
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+#Kopiramo vse te datoteke v base direkotorij dockerja
+COPY . .
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
