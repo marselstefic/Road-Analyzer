@@ -1,14 +1,13 @@
 import threading
 import glob
 import cv2
-import numpy as np
 import os
 from deepface import DeepFace
 from sklearn.model_selection import train_test_split
 import time
 
 
-# Ustvarjanje objekta za zaznavanje obrazov s Haar kaskadnim klasifikatorjem
+# Ustvarimo objekt face_cascade, ki bo uporabljen za prepoznavanje obrazov. Uporabljamo Haar cascade classifier, ki je metoda za prepoznavanje obrazov in drugih objektov v slikah.
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -51,7 +50,7 @@ train_images, test_images = train_test_split(reference_imgs, test_size=0.3, rand
 face_match = False
 face_detected = False
 
-# Load VGG-Face model
+# Ustvarimo VGG-Face model za prepoznavanje modela
 vggface_model = DeepFace.build_model('VGG-Face')
 
 def check_face(frame):
@@ -61,11 +60,18 @@ def check_face(frame):
         try:
             if DeepFace.verify(frame, reference_img.copy(), model_name='VGG-Face')['verified']:
                 face_match = True
-                break  # if a match is found, no need to check the rest
+                break  
         except ValueError:
             pass
+# Če je obraz uspešno prepoznan, nastavimo face_match na True.
+
+
 
 start_time = None
+# Ustvarimo spremenljivko start_time, ki bo uporabljena za sledenje času.
+
+
+
 
 while True:
     ret, frame = cap.read()
@@ -73,6 +79,10 @@ while True:
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        # Sličico pretvorimo v sivinsko sliko in uporabimo Haar kaskadni klasifikator za zaznavanje obrazov.
+
+
+
 
         if len(faces) > 0:  # if a face is detected
             face_detected = True
@@ -105,5 +115,5 @@ while True:
 cv2.destroyAllWindows()
 cap.release()
 
-# Save the learned model
+# Shranimo naučeni model za kasnejšo uporabo.
 vggface_model.save('vggface_model.h5')
