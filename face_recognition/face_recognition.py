@@ -7,7 +7,7 @@ import os
 from deepface import DeepFace
 from sklearn.model_selection import train_test_split
 
-# Initialize face detector
+# Ustvarjanje objekta za zaznavanje obrazov s Haar kaskadnim klasifikatorjem
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -18,11 +18,10 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 counter = 0
 counter2 = 0
 
-# create a directory to store the reference images
+# kreiranje direktorij in shranjavanje slik ce ne obstatjajo
 if not os.path.exists('reference_images'):
     os.makedirs('reference_images')
 
-# If there are no images in the 'reference_images' directory, capture and save 20 frames from the webcam
 if not glob.glob('reference_images/*.jpg'):
     while counter < 30:
         ret, frame = cap.read()
@@ -35,10 +34,10 @@ if not glob.glob('reference_images/*.jpg'):
         if key == ord('q'):  # quit if 'q' is pressed
             break
 
-# load all reference images
+# Load all reference images
 reference_imgs = [cv2.imread(filename) for filename in glob.glob('reference_images/*.jpg')]
 
-# Split reference images into training and testing sets
+# Razdelitev na trening in testing slike
 train_images, test_images = train_test_split(reference_imgs, test_size=0.3, random_state=42)
 
 face_match = False
