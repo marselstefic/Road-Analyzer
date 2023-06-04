@@ -12,6 +12,7 @@ web-build/
 .env
 test.py
 reference_images
+vggface_model.h5
 
 
 
