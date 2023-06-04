@@ -13,6 +13,9 @@ web-build/
 test.py
 reference_images
 vggface_model.h5
+luka
+marsel
+uros
 
 
 
