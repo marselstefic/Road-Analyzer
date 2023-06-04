@@ -2,11 +2,10 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import Bcrypt
-from decouple import config
 import math
 
-MONGODB_URI = config('MONGODB_URI')
-#MONGODB_URI = 'mongodb://127.0.0.1/projekt'
+#MONGODB_URI = config('MONGODB_URI')
+MONGODB_URI = 'mongodb://127.0.0.1/projekt'
 
 
 app = Flask(__name__)
@@ -47,6 +46,7 @@ class Quality(db.Document):
     value = db.FloatField()
     longitude = db.FloatField()
     latitude = db.FloatField()
+    postedBy = db.StringField()
 
 # Algorithm for data processing
 def process_data(data):
@@ -103,6 +103,7 @@ def login():
         # Check if the user exists and the password is correct
         if user and bcrypt.check_password_hash(user.password, password):
             session['username'] = username
+            print("Stored username in session:", session['username'])  # Add this line for debugging
             return redirect(url_for('get_all_data'))
         else:
             return jsonify({'error': 'Invalid username or password'}), 401
@@ -118,27 +119,48 @@ def logout():
 @app.route('/', methods=['GET'])
 def get_all_data():
     try:
-        # Retrieve all unused data
-        data = Data.objects(used=False)
-
-        # Process and save each data entry as Quality
-        for entry in data:
-            scaled_value = process_data(entry.to_mongo().to_dict())
-
-            quality = Quality(
-                value=scaled_value,
-                longitude=entry.longitude,
-                latitude=entry.latitude,
-            )
-            quality.save()
-
-            # Set the 'used' flag of the Data object to True
-            entry.update(used=True)
-
-        # Retrieve all quality entries
+        # Retrieve the quality data posted by the logged-in user
         quality_data = Quality.objects()
 
-        return render_template('data.html', data=quality_data)
+        # Compute the count of data points that fall in each range
+        counts = {'0-3': 0, '3-7': 0, '7-10': 0}
+        for data in quality_data:
+            if 0 <= data.value < 3:
+                counts['0-3'] += 1
+            elif 3 <= data.value < 7:
+                counts['3-7'] += 1
+            elif 7 <= data.value <= 10:
+                counts['7-10'] += 1
+
+        print("Quality Data:", quality_data)  # Add this line for debugging
+
+        return render_template('data.html', data=quality_data, counts=counts)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/mydata', methods=['GET'])
+def get_my_data():
+    try:
+        # Retrieve the username of the logged-in user
+        username = session.get('username')
+        print("Retrieved username from session:", username)  # Add this line for debugging
+
+        # Retrieve the quality data posted by the logged-in user
+        quality_data = Quality.objects(postedBy=username)
+
+         # Compute the count of data points that fall in each range
+        counts = {'0-3': 0, '3-7': 0, '7-10': 0}
+        for data in quality_data:
+            if 0 <= data.value < 3:
+                counts['0-3'] += 1
+            elif 3 <= data.value < 7:
+                counts['3-7'] += 1
+            elif 7 <= data.value <= 10:
+                counts['7-10'] += 1
+
+        print("Quality Data:", quality_data)  # Add this line for debugging
+
+        return render_template('mydata.html', data=quality_data, counts=counts)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
@@ -146,8 +168,17 @@ def get_all_data():
 def add_data():
     try:
         data = request.get_json()
-        new_data = Data(**data)
-        new_data.save()
+        processed_value = process_data(data)  # Process the sensor data
+
+        # Create a new Quality object with processed data
+        quality = Quality(
+            value=processed_value,
+            longitude=data.get('longitude'),
+            latitude=data.get('latitude'),
+            postedBy=data.get('postedBy')
+        )
+        quality.save()  # Save the Quality object to the database
+
         return jsonify({'message': 'Data saved successfully'}), 201
     except Exception as e:
         print(str(e))

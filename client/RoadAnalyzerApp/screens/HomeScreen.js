@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
   const navigateToLogin = () => {
@@ -12,8 +12,12 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button title="Login" onPress={navigateToLogin} />
-      <Button title="Register" onPress={navigateToRegister} />
+      <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -23,5 +27,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 10,
+  },
+  button: {
+    backgroundColor: '#1e90ff',
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+    width: '80%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
