@@ -1,11 +1,12 @@
 import threading
 import glob
-import time
 import cv2
 import numpy as np
 import os
 from deepface import DeepFace
 from sklearn.model_selection import train_test_split
+import time
+
 
 # Ustvarjanje objekta za zaznavanje obrazov s Haar kaskadnim klasifikatorjem
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -18,24 +19,31 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 counter = 0
 counter2 = 0
 
-# kreiranje direktorij in shranjavanje slik ce ne obstatjajo
-if not os.path.exists('reference_images'):
-    os.makedirs('reference_images')
+# Vnos imena mape preko konzole
+folder_name = input("Vnesite uporabniško ime: ")
 
-if not glob.glob('reference_images/*.jpg'):
+# Preverjanje ali mapa že obstaja
+if os.path.exists(folder_name):
+    # Load all reference images from the specified folder
+    reference_imgs = [cv2.imread(filename) for filename in glob.glob(f'{folder_name}/*.jpg')]
+else:
+    os.makedirs(folder_name)
+    frame_counter = 0  # Add a frame counter
     while counter < 30:
         ret, frame = cap.read()
         if ret:
             cv2.imshow('video', frame)
-            cv2.imwrite(f'reference_images/img_{counter}.jpg', frame)
-            counter += 1
+            if frame_counter % 5 == 0:  # Only save image every 5 frames
+                cv2.imwrite(f'{folder_name}/img_{counter}.jpg', frame)
+                counter += 1
+            frame_counter += 1  # Always increment the frame counter
 
         key = cv2.waitKey(1)
         if key == ord('q'):  # quit if 'q' is pressed
             break
 
-# Load all reference images
-reference_imgs = [cv2.imread(filename) for filename in glob.glob('reference_images/*.jpg')]
+    # Load all reference images from the created folder
+    reference_imgs = [cv2.imread(filename) for filename in glob.glob(f'{folder_name}/*.jpg')]
 
 # Razdelitev na trening in testing slike
 train_images, test_images = train_test_split(reference_imgs, test_size=0.3, random_state=42)
@@ -57,6 +65,8 @@ def check_face(frame):
         except ValueError:
             pass
 
+start_time = None
+
 while True:
     ret, frame = cap.read()
 
@@ -66,7 +76,8 @@ while True:
 
         if len(faces) > 0:  # if a face is detected
             face_detected = True
-            start_time = time.time()  # reset the start time
+            if start_time is None:  # Start the timer when the face is detected for the first time
+                start_time = time.time()
         else:
             face_detected = False
 
@@ -79,17 +90,12 @@ while True:
             counter += 1
             if face_match:
                 counter2 += 1
-                print("The face matches the reference images!")
-
-                if counter2 > 20:
-                    cv2.putText(frame, "MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-                else:
-                    cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
-            else:
-                cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+                print("Successful verification!")
+                break
         else:
-            cv2.putText(frame, "No Face Detected", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
-
+            if start_time is not None and time.time() - start_time > 10:
+                print("Unsuccessful verification!")
+                break
         cv2.imshow('video', frame)
 
     key = cv2.waitKey(1)
