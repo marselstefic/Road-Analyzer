@@ -8,102 +8,98 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        #map {
-            height: 400px;
-        }
+    #map {
+      height: 400px;
+    }
     </style>
-<script>
+    <script>
     $(document).ready(function() {
-      var map = L.map('map').setView([46.1512, 14.9955], 7);
-  
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-      }).addTo(map);
-  
-      // Get the username from the session
-      var username = "{{ session['username'] }}";
-  
-      function displayMarkers(data) {
-  // Filter the data based on the logged-in user
-  var filteredData = data.filter(function(item) {
-    return item.postedBy === username;
-  });
+        var refreshData = debounce(function() {
+            $.ajax({
+                url: '/data',
+                type: 'GET',
+                success: function(response) {
+                    // Update the data container with the new data
+                    $('#data-container').html($(response).find('#data-container').html());
+                    updateMarkers();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }, 5000);
 
-  console.log("Filtered Data:", filteredData);
-
-  // Display the waypoints for the filtered data
-  filteredData.forEach(function(item) {
-    var value = item.value;
-    var color = getColor(value);
-    console.log("Latitude:", item.latitude);
-    console.log("Longitude:", item.longitude);
-
-    var marker = L.circleMarker([item.latitude, item.longitude], {
-      radius: 5,
-      fillColor: color,
-      color: '#000',
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    }).addTo(map);
-    marker.bindPopup(
-      "Value: " + value + "<br>" +
-      "Longitude: " + item.longitude + "<br>" +
-      "Latitude: " + item.latitude
-    );
-  });
-}
-  
-      // Send an AJAX request to fetch the data for the logged-in user
-      $.ajax({
-        url: '/mydata',
-        type: 'GET',
-        success: function(response) {
-          if (response.hasOwnProperty('error')) {
-            console.log("Error:", response.error);
-          } else {
-            console.log("Response:", response);
-            displayMarkers(response);
-          }
-        },
-        error: function(error) {
-          console.log(error);
+        // Debounce function to limit the rate of function execution
+        function debounce(func, delay) {
+            var timeout;
+            return function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(func, delay);
+            };
         }
-      });
-    });
-  
-    function getColor(value) {
-      if (value >= 0 && value < 3) {
-        return 'green';
-      } else if (value >= 3 && value < 7) {
-        return 'yellow';
-      } else if (value >= 7 && value <= 10) {
-        return 'red';
-      } else {
-        return 'blue'; // Default color if value is outside the specified range
-      }
-    }
-  
-    function confirmLogout() {
-      var logout = confirm("Do you want to logout?");
-      if (logout) {
-        $.ajax({
-          url: '/logout',
-          type: 'POST',
-          success: function() {
-            window.location.href = "/";
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      }
-    }
-  </script>
 
-    
+        // Call the refreshData() function to start the initial data update
+        refreshData();
+
+        var map = L.map('map').setView([46.1512, 14.9955], 7);
+
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+        }).addTo(map);
+
+        {% for item in data %}
+        var value = {{ item.value }};
+        var color = getColor(value);
+        var marker = L.circleMarker([{{ item.latitude }}, {{ item.longitude }}], {
+          radius: 5,
+          fillColor: color,
+          color: '#000',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(map);
+        marker.bindPopup(
+          "Value: " + value + "<br>" +
+          "Longitude: {{ item.longitude }}<br>" +
+          "Latitude: {{ item.latitude }}"
+        );
+        {% endfor %}
+    });
+
+    function getColor(value) {
+        if (value >= 0 && value < 3) {
+            return 'green';
+        } else if (value >= 3 && value < 7) {
+            return 'yellow';
+        } else if (value >= 7 && value <= 10) {
+            return 'red';
+        } else {
+            return 'blue'; // Default color if value is outside the specified range
+        }
+    }
+
+    function confirmLogout() {
+    var logout = confirm("Do you want to logout?");
+    if (logout) {
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            success: function() {
+                window.location.href = "/";
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        }
+    }
+
+    </script>
 </head>
 <body>
     <!-- Navbar -->
@@ -114,17 +110,17 @@
         </button>
         <div class="collapse navbar-collapse  justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
+                {% if 'username' not in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="/">Homepage</a>
                 </li>
-                {% if 'username' not in session %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
                 </li>
@@ -132,8 +128,51 @@
             </ul>
         </div>
     </nav>
+    <div id="data-container" class="pt-5">
+        <img src="{{ url_for('static', filename='avtocesta.jpg') }}" alt="Autoban" style="width:100%;">
+        <div class="row" style="padding: 20px; padding-top: 50px;">
+            <div class="col-md-6">
+                <h2 class="map-title">Personal sensor data</h2>
+                <div id="map"></div>
+            </div>
+            <div class="col-md-6" style="padding-top: 150px;">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
 
-    <div id="map"></div>
-
+    <script>
+        // Initialize the chart
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['0-3', '3-7', '7-10'],
+                datasets: [{
+                    label: 'Number of Data Points',
+                    data: [{{ counts['0-3'] }}, {{ counts['3-7'] }}, {{ counts['7-10'] }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)', // Color for '0-3'
+                        'rgba(255, 206, 86, 0.2)', // Color for '3-7'
+                        'rgba(255, 99, 132, 0.2)' // Color for '7-10'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)', // Color for '0-3'
+                        'rgba(255, 206, 86, 1)', // Color for '3-7'
+                        'rgba(255, 99, 132, 1)' // Color for '7-10'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    
 </body>
 </html>
