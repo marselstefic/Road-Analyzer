@@ -20,15 +20,16 @@ export default function SensorScreen({ route }) {
   const [subscription, setSubscription] = useState([]);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [gpsAvailable, setGpsAvailable] = useState(false);
 
   const _slow = () => {
-    Accelerometer.setUpdateInterval(2000);
-    Gyroscope.setUpdateInterval(2000);
+    Accelerometer.setUpdateInterval(2500);
+    Gyroscope.setUpdateInterval(2500);
   };
 
   const _fast = () => {
-    Accelerometer.setUpdateInterval(16);
-    Gyroscope.setUpdateInterval(16);
+    Accelerometer.setUpdateInterval(1000);
+    Gyroscope.setUpdateInterval(1000);
   };
 
   const postDataToServer = async (accelerometerData, gyroscopeData) => {
@@ -64,17 +65,18 @@ export default function SensorScreen({ route }) {
   };
 
   const _subscribe = async () => {
-    setSubscription([
-      Accelerometer.addListener((accelerometerData) => {
-        setAccelData(accelerometerData);
-        postDataToServer(accelerometerData, gyroData);
-      }),
-      Gyroscope.addListener((gyroscopeData) => {
-        setGyroData(gyroscopeData);
-        postDataToServer(accelData, gyroscopeData);
-      }),
-    ]);
-
+    if (gpsAvailable) {
+      setSubscription([
+        Accelerometer.addListener((accelerometerData) => {
+          setAccelData(accelerometerData);
+          postDataToServer(accelerometerData, gyroData);
+        }),
+        Gyroscope.addListener((gyroscopeData) => {
+          setGyroData(gyroscopeData);
+          postDataToServer(accelData, gyroscopeData);
+        }),
+      ]);
+    }
     try {
       await Location.watchPositionAsync(
         {
@@ -101,6 +103,8 @@ export default function SensorScreen({ route }) {
 
   useEffect(() => {
     (async () => {
+      Accelerometer.setUpdateInterval(2500);
+      Gyroscope.setUpdateInterval(2500);
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
