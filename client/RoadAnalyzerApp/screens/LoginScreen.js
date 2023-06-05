@@ -13,7 +13,7 @@ export default function RegisterScreen({ navigation }) {
       formData.append("username", username);
       formData.append("password", password);
 
-      const response = await fetch("http://164.8.162.93:5000/login", {
+      const response = await fetch("http://164.8.163.11:5000/login", {
         method: "POST",
         body: formData,
       });
