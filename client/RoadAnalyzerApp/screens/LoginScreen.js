@@ -1,6 +1,12 @@
 // RegisterScreen.js
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function LoginScreen({ navigation }) {
@@ -13,10 +19,13 @@ export default function LoginScreen({ navigation }) {
       formData.append("username", username);
       formData.append("password", password);
 
-      const response = await fetch("http://164.8.163.11:5000/login", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://" + process.env.EXPO_PUBLIC_API_URL + "/login",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -74,16 +83,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#1e90ff',
+    backgroundColor: "#1e90ff",
     padding: 10,
     marginTop: 20,
     borderRadius: 5,
-    width: '90%',
-    alignItems: 'center',
+    width: "90%",
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

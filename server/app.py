@@ -6,7 +6,9 @@ from decouple import config
 import math
 
 
-MONGODB_URI = config('MONGODB_URI')
+# MONGODB_URI = config('MONGODB_URI')
+
+MONGODB_URI = 'mongodb://127.0.0.1/projekt'
 
 app = Flask(__name__)
 CORS(app)

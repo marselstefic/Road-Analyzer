@@ -22,13 +22,13 @@ export default function SensorScreen({ route }) {
   const [errorMsg, setErrorMsg] = useState(null);
 
   const _slow = () => {
-    Accelerometer.setUpdateInterval(2500);
-    Gyroscope.setUpdateInterval(2500);
+    Accelerometer.setUpdateInterval(2000);
+    Gyroscope.setUpdateInterval(2000);
   };
 
   const _fast = () => {
-    Accelerometer.setUpdateInterval(1000);
-    Gyroscope.setUpdateInterval(1000);
+    Accelerometer.setUpdateInterval(16);
+    Gyroscope.setUpdateInterval(16);
   };
 
   const postDataToServer = async (accelerometerData, gyroscopeData) => {
@@ -45,13 +45,16 @@ export default function SensorScreen({ route }) {
         postedBy: postedBy,
       };
 
-      const response = await fetch("http://164.8.163.11:5000/data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "http://" + process.env.EXPO_PUBLIC_ADDRESS + "/data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -101,8 +104,6 @@ export default function SensorScreen({ route }) {
 
   useEffect(() => {
     (async () => {
-      Accelerometer.setUpdateInterval(2500);
-      Gyroscope.setUpdateInterval(2500);
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");

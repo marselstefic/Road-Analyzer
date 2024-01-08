@@ -25,17 +25,20 @@ export default function RegisterScreen({ navigation }) {
     }
 
     try {
-      const response = await fetch("http://164.8.163.11:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          username: username,
-          password: password,
-        }),
-      });
+      const response = await fetch(
+        "http://" + process.env.EXPO_PUBLIC_ADDRESS + "/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            username: username,
+            password: password,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,7 +47,7 @@ export default function RegisterScreen({ navigation }) {
         navigation.navigate("SensorScreen", { postedBy: username }); // Navigate to SensorScreen after successful registration
       }
     } catch (error) {
-      console.error("Failed to register user: " + error);
+      console.error(process.env.EXPO_PUBLIC_ADDRESS + error);
     }
   };
 
@@ -106,16 +109,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#1e90ff',
+    backgroundColor: "#1e90ff",
     padding: 10,
     marginTop: 20,
     borderRadius: 5,
-    width: '90%',
-    alignItems: 'center',
+    width: "90%",
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
