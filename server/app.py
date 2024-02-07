@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import Bcrypt
 from decouple import config
+from concurrent.futures import ThreadPoolExecutor
 import math
 
 
@@ -51,16 +52,23 @@ class Quality(db.Document):
     postedBy = db.StringField()
 
 # Algorithm for data processing
-def process_data(data):
+    
+def process_gyro(data):
     normalized_gyroX = data['gyroX'] / 15
     normalized_gyroY = data['gyroY'] / 15
     normalized_gyroZ = data['gyroZ'] / 15
+    return normalized_gyroX**2 + normalized_gyroY**2 + normalized_gyroZ**2
+
+def process_accele(data):
     normalized_accX = data['accelerometerX'] / 50
     normalized_accY = data['accelerometerY'] / 50
     normalized_accZ = data['accelerometerZ'] / 50
+    return normalized_accX**2 + normalized_accY**2 + normalized_accZ**2
+
+def process_data(gyro_data, accele_data):
     magnitude = math.sqrt(
-        normalized_gyroX**2 + normalized_gyroY**2 + normalized_gyroZ**2 +
-        normalized_accX**2 + normalized_accY**2 + normalized_accZ**2
+        gyro_data +
+        accele_data
     )
     min_magnitude = 0
     max_magnitude = math.sqrt(1**2 + 1**2 + 1**2 + 1**2 + 1**2 + 1**2)
@@ -131,7 +139,7 @@ def get_all_data():
                 counts['0-3'] += 1
             elif 3 <= data.value < 7:
                 counts['3-7'] += 1
-            elif 7 <= data.value <= 10:
+            elif 7 <= data.value:
                 counts['7-10'] += 1
 
         print("Quality Data:", quality_data)  # Add this line for debugging
@@ -151,13 +159,13 @@ def get_my_data():
         quality_data = Quality.objects(postedBy=username)
 
          # Compute the count of data points that fall in each range
-        counts = {'0-3': 0, '3-7': 0, '7-10': 0}
+        counts = {'0-3': 0, '3-7': 0, '7-10S': 0}
         for data in quality_data:
             if 0 <= data.value < 3:
                 counts['0-3'] += 1
             elif 3 <= data.value < 7:
                 counts['3-7'] += 1
-            elif 7 <= data.value <= 10:
+            elif 7 <= data.value:
                 counts['7-10'] += 1
 
         print("Quality Data:", quality_data)  # Add this line for debugging
@@ -170,11 +178,17 @@ def get_my_data():
 def add_data():
     try:
         data = request.get_json()
-        processed_value = process_data(data)  # Process the sensor data
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_gyro = executor.submit(process_gyro, data)
+            future_accelerometer = executor.submit(process_accele, data)
+
+            processed_gyro = future_gyro.result()
+            processed_accelerometer = future_accelerometer.result()
+        processed_value = process_data(processed_gyro, processed_accelerometer)  # Process the sensor data
 
         # Create a new Quality object with processed data
         quality = Quality(
-            value=processed_value,
+            value=processed_value*12,
             longitude=data.get('longitude'),
             latitude=data.get('latitude'),
             postedBy=data.get('postedBy')

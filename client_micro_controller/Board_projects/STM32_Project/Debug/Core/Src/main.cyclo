@@ -1,0 +1,14 @@
+../Core/Src/main.c:72:6:pavza	2
+../Core/Src/main.c:79:9:spi1_beriRegister	1
+../Core/Src/main.c:95:6:spi1_pisiRegister	1
+../Core/Src/main.c:109:6:spi1_beriRegistre	1
+../Core/Src/main.c:121:9:i2c1_pisiRegister	1
+../Core/Src/main.c:127:6:i2c1_beriRegistre	3
+../Core/Src/main.c:135:6:initLSM303DLHC	1
+../Core/Src/main.c:166:5:main	6
+../Core/Src/main.c:253:6:SystemClock_Config	4
+../Core/Src/main.c:304:13:MX_I2C1_Init	4
+../Core/Src/main.c:352:13:MX_SPI1_Init	2
+../Core/Src/main.c:392:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:427:13:MX_GPIO_Init	1
+../Core/Src/main.c:491:6:Error_Handler	1
